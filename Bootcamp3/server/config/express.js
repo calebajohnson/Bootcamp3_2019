@@ -8,31 +8,28 @@ var path = require('path'),
     getCoordinates = require('../controllers/coordinates.server.controller.js');
 
 module.exports.init = function() {
-  //connect to database
+  //connects to database
   mongoose.connect(config.db.uri, { useNewUrlParser: true });
     mongoose.set('useCreateIndex', true);
     mongoose.set('useFindAndModify', false);
 
-  //initialize app
+  //initializes app
   var app = express();
 
-  //enable request logging for development debugging
+  //enables request logging for development debugging
   app.use(morgan('dev'));
 
   //body parsing middleware 
   app.use(bodyParser.json());
 
-  /* serve static files - see http://expressjs.com/en/starter/static-files.html */
+  /* serves static files */
   app.use('/', express.static(__dirname + '/../../client'));
 
-/* The next three middleware are important to the API that we are bulding */
+/* The next three middleware are important to the API */
 
-  /* Request Handler for route /api/lisings
-     Update the code to meet the required format - app.use('/api/listings', appropriateMiddlewWare)
-     use the listings router middleware for requests to the api 
-     check the variables list above
-  */
-  app.use('/api/listings');
+  /* Request Handler for route /api/lisings */
+
+  app.use('/api/listings', listingsRouter);
 
 
    /* Request Handler for coordinates
@@ -42,17 +39,14 @@ module.exports.init = function() {
   });
 
 
-  /* Request Handeler for all other routes
+  /* Request Handler for all other routes
      Sends a response (res) to go to the homepage for all routes not specified */ 
   app.all('/*', function(req, res) {
    
-   /*Add YOUR CODE HERE 
-      see https://expressjs.com/en/api.html#res.sendFile
-      see https://nodejs.org/api/path.html
+      /*
       The path.resolve() method returns a string and resolves a sequence of paths or path segments into an absolute path.
-      If no path segments are passed, path.resolve() will return the absolute path of the current working directory.
    */
-   //res.sendFile(path.resolve(...));
+   res.sendFile(path.resolve('client/index.html')); 
   });
   
   return app;
